@@ -29,10 +29,11 @@ RUN npm run build
 # Production runtime
 ############################
 FROM node:${NODE_VERSION} AS runtime
+ARG COMMIT_HASH=unknown
 ENV NODE_ENV=production \
-    PORT=4000 \
     SERVE_STATIC=1 \
     COMMIT_HASH=${COMMIT_HASH}
+# NOTE: Do NOT set PORT here - Railway injects its own PORT
 WORKDIR /app
 
 # Copy only needed workspace artifacts and node_modules

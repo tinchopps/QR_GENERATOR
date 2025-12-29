@@ -12,8 +12,7 @@ cmds = [
 ]
 
 [start]
-cmd = "node backend/dist/server.js"
+cmd = "SERVE_STATIC=1 node backend/dist/server.js"
 
 [variables]
 NODE_ENV = "production"
-SERVE_STATIC = "1"
