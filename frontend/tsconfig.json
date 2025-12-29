@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "baseUrl": "./",
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "types": ["node", "jest", "@testing-library/jest-dom"],
+    "noEmit": true,
+    // removed allowImportingTsExtensions now that imports are extensionless
+  },
+  "include": ["src", "../shared"],
+  "exclude": ["node_modules", "dist"]
+}
