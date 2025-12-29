@@ -60,7 +60,14 @@ app.get('/version', (_req, res) => {
 
 // Optionally serve frontend build (production single-container) when SERVE_STATIC is set
 if (process.env.SERVE_STATIC) {
-	const staticDir = path.join(__dirname, '../../frontend/dist');
+	// Try multiple possible locations for static files
+	const possiblePaths = [
+		path.join(__dirname, 'public'),           // Docker/Nixpacks: copied to backend/dist/public
+		path.join(__dirname, '../../frontend/dist') // Local dev fallback
+	];
+	const fs = require('fs');
+	const staticDir = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
+	
 	app.use(express.static(staticDir));
 	app.get('*', (req, res) => {
 		if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not found' });

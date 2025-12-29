@@ -2,13 +2,17 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm ci --include=dev"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = [
+  "npm run build:backend",
+  "npm run build:frontend",
+  "cp -r frontend/dist backend/dist/public"
+]
 
 [start]
-cmd = "npm start"
+cmd = "node backend/dist/server.js"
 
 [variables]
 NODE_ENV = "production"
