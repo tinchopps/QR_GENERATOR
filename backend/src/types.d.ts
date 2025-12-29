@@ -3,7 +3,7 @@ declare module 'qrcode' {
 	interface QRCodeOptions {
 		type?: string;
 		color?: { dark?: string; light?: string };
-		errorCorrection?: 'L' | 'M' | 'Q' | 'H';
+		errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
 		width?: number;
 	}
 	export function toString(data: string, options?: QRCodeOptions): Promise<string>;

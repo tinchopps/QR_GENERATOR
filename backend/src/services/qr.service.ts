@@ -21,7 +21,7 @@ export async function generateQRCode(params: QrRequest): Promise<GenerateResult>
     const svg = await QRCode.toString(data, {
       type: 'svg',
       color: { dark: colorDark, light: colorLight },
-      errorCorrection: ecc
+      errorCorrectionLevel: ecc
     });
     // Logo embedding in SVG (simple <image> center) if logo is base64 SVG or PNG
     let finalSvg = svg;
@@ -52,7 +52,7 @@ export async function generateQRCode(params: QrRequest): Promise<GenerateResult>
   } else {
     const buffer = await QRCode.toBuffer(data, {
       color: { dark: colorDark, light: colorLight },
-      errorCorrection: ecc,
+      errorCorrectionLevel: ecc,
       width: size
     });
     let composite = buffer;
