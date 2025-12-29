@@ -29,14 +29,14 @@ export const useQrStore = create<QrState>((set, get) => ({
   config: defaultConfig,
   history: [],
   autoGenerate: (() => {
-    try { const saved = localStorage.getItem('qr_auto'); if (saved !== null) return saved === '1'; } catch {}
+    try { const saved = localStorage.getItem('qr_auto'); if (saved !== null) return saved === '1'; } catch { /* localStorage not available */ }
     return true;
   })(),
   setConfig: (c) => set({ config: { ...get().config, ...c } }),
   setResult: (r) => set({ result: r }),
   setAutoGenerate: (v) => {
     set({ autoGenerate: v });
-    try { localStorage.setItem('qr_auto', v ? '1' : '0'); } catch {}
+    try { localStorage.setItem('qr_auto', v ? '1' : '0'); } catch { /* localStorage not available */ }
   },
   addHistory: ({ hash, config }) => {
   const existing = get().history;
@@ -58,5 +58,5 @@ export function rehydrateAutoGenerate() {
   try {
     const saved = localStorage.getItem('qr_auto');
     useQrStore.setState({ autoGenerate: saved === null ? true : saved === '1' });
-  } catch {}
+  } catch { /* localStorage not available */ }
 }

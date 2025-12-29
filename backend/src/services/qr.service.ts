@@ -1,4 +1,4 @@
-// @ts-ignore - ambient types not available for qrcode in this setup
+// @ts-expect-error - ambient types not available for qrcode in this setup
 import QRCode from 'qrcode';
 import crypto from 'crypto';
 import sharp from 'sharp';

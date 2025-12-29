@@ -1,6 +1,6 @@
 // Ambient declarations
 declare module 'qrcode' {
-	const anything: any;
+	const anything: unknown;
 	export default anything;
 }
 declare module 'qrcode';

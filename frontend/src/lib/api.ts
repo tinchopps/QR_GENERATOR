@@ -6,7 +6,9 @@ function resolveBaseURL(): string {
   try {
     // eslint-disable-next-line no-new-func
     base = new Function('try{return import.meta.env&&import.meta.env.VITE_API_BASE||""}catch{return ""}')();
-  } catch {}
+  } catch {
+    // Ignore - Vite env not available
+  }
   // 2. Try process.env (tests / build time)
   if (!base && typeof process !== 'undefined') base = process.env.VITE_API_BASE || '';
   // 3. Auto-detect dev: frontend on 5173, backend likely on 4000 (concurrently script)
@@ -22,8 +24,8 @@ function resolveBaseURL(): string {
 }
 
 const baseURL = resolveBaseURL();
-const ax: any = axios as any;
-const api = ax.create ? ax.create({ baseURL }) : ax;
+const ax = axios as { create?: (config: { baseURL: string }) => typeof axios };
+const api = ax.create ? ax.create({ baseURL }) : axios;
 
 if (typeof window !== 'undefined') {
   // Minimal debug hook (no console spam in production if not needed)
@@ -36,6 +38,6 @@ if (typeof window !== 'undefined') {
   }
 }
 
-export function postQR<T = any>(body: any) {
+export function postQR<T = unknown>(body: Record<string, unknown>) {
   return api.post('/api/qr', body) as Promise<{ data: T }>;
 }

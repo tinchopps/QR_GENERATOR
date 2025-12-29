@@ -6,12 +6,12 @@ import { useQrStore, rehydrateAutoGenerate } from '../src/store/qrStore';
 const axiosMockResponses: string[] = [];
 let mockCounter = 0;
 jest.mock('axios', () => ({
-  post: jest.fn().mockImplementation((_url: string, body: any) => {
+  post: jest.fn().mockImplementation((_url: string, body: Record<string, unknown>) => {
   // Deterministic-ish unique short hash independent of leading data chars to avoid collisions in tests
   const hash = 'h' + (mockCounter++).toString(36).padStart(5, '0');
     axiosMockResponses.push(hash);
     return Promise.resolve({
-  data: { mimeType: 'image/png', data: 'AAA', meta: { hash, size: body.size || 256, format: body.format || 'png', ecc: 'M' } }
+  data: { mimeType: 'image/png', data: 'AAA', meta: { hash, size: (body.size as number) || 256, format: (body.format as string) || 'png', ecc: 'M' } }
     });
   })
 }));
@@ -23,7 +23,7 @@ beforeEach(() => {
     history: [],
     result: undefined,
     config: { data: '', format: 'png', size: 256, colorDark: '#000000', colorLight: '#ffffff', errorCorrection: 'M', logoScale: 0.2 }
-  } as any);
+  });
   mockCounter = 0;
   axiosMockResponses.length = 0;
 });
@@ -61,12 +61,13 @@ test('download button uses hash in filename (manual generate)', async () => {
 });
 
 test('share fallback copies URL when Web Share API missing', async () => {
-  const originalShare = (navigator as any).share;
-  (navigator as any).share = undefined;
-  if (!(navigator as any).clipboard) {
-    (navigator as any).clipboard = { writeText: jest.fn().mockResolvedValue(undefined) };
+  const nav = navigator as Navigator & { share?: unknown; clipboard?: { writeText: (s: string) => Promise<void> } };
+  const originalShare = nav.share;
+  nav.share = undefined;
+  if (!nav.clipboard) {
+    nav.clipboard = { writeText: jest.fn().mockResolvedValue(undefined) };
   }
-  const writeTextSpy = jest.spyOn((navigator as any).clipboard, 'writeText').mockResolvedValue(undefined as unknown as void);
+  const writeTextSpy = jest.spyOn(nav.clipboard, 'writeText').mockResolvedValue(undefined);
   render(<App />);
   const dataInput = screen.getByLabelText('Data / URL') as HTMLInputElement;
   fireEvent.change(dataInput, { target: { value: 'Hello Share' } });
@@ -75,7 +76,7 @@ test('share fallback copies URL when Web Share API missing', async () => {
   fireEvent.click(screen.getByText(/Share/i));
   await waitFor(() => expect(writeTextSpy).toHaveBeenCalled());
   writeTextSpy.mockRestore();
-  (navigator as any).share = originalShare;
+  nav.share = originalShare;
 });
 
 test('history load restores config', async () => {

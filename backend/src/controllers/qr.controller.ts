@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { qrRequestSchema } from '../utils/validation';
 import { generateQRCode } from '../services/qr.service';
 import { HttpError } from '../middleware/errorHandler';

@@ -33,6 +33,7 @@ const App = (): JSX.Element => {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoGenerate, config]);
 
   useEffect(() => {
@@ -46,10 +47,11 @@ const App = (): JSX.Element => {
       try {
 	  const res = await postQR<QrResponseShared>(debouncedConfig);
         setResult(res.data);
-      } catch (e:any) {
+      } catch (e: unknown) {
         if (axios.isAxiosError(e)) {
+          const errorData = e.response?.data as { error?: string } | undefined;
           if (e.message.includes('Network')) setToast('Backend no accesible (verifica que el servidor corre en :4000)');
-          else setToast((e.response?.data as any)?.error || 'Error generando QR');
+          else setToast(errorData?.error || 'Error generando QR');
         } else {
           setToast('Error generando QR');
         }
@@ -71,10 +73,11 @@ const App = (): JSX.Element => {
     try {
 	  const res = await postQR<QrResponseShared>(config);
       setResult(res.data);
-    } catch (e:any) {
+    } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
+        const errorData = e.response?.data as { error?: string } | undefined;
         if (e.message.includes('Network')) setToast('Backend no accesible (verifica que el servidor corre en :4000)');
-        else setToast((e.response?.data as any)?.error || 'Error generando QR');
+        else setToast(errorData?.error || 'Error generando QR');
       } else {
         setToast('Error generando QR');
       }

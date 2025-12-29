@@ -1,5 +1,4 @@
-import { qrRequestSchema, QrRequest } from '../src/utils/validation';
-import { z } from 'zod';
+import { qrRequestSchema } from '../src/utils/validation';
 
 describe('QR Validation Schema Tests', () => {
   describe('qrRequestSchema', () => {
