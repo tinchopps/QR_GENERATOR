@@ -76,5 +76,10 @@ if (process.env.SERVE_STATIC) {
 }
 
 app.use(errorHandler);
+// Simple root route for platform health / quick check
+app.get('/', (_req, res) => {
+	res.send('Backend Running');
+});
+
 
 export default app;
