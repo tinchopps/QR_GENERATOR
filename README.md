@@ -264,8 +264,3 @@ MIT
 ## Licencia
 MIT
 
-## Capturas / GIF (Opcional)
-Agregar en `docs/` y referenciar aquí para portfolio.
-
----
-Fin del README.
