@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "clean": "node -e \"import('fs').then(fs=>{(function walk(d){for(const f of fs.readdirSync(d)){const p=d+'\\\\'+f; if(fs.statSync(p).isDirectory()) walk(p); else if(/\\.js$/.test(p)) fs.unlinkSync(p);} })('src');})\"",
+    "clean": "node -e \"import('fs').then(fs=>{(function walk(d){for(const f of fs.readdirSync(d)){const p=d+'/'+f; if(fs.statSync(p).isDirectory()) walk(p); else if(/\\.js$/.test(p)) fs.unlinkSync(p);} })('src');})\"",
     "build": "npm run clean && vite build",
     "preview": "vite preview",
     "test": "jest --passWithNoTests"
