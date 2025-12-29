@@ -1,5 +1,4 @@
-// @ts-expect-error - ambient types not available for qrcode in this setup
-import QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 import crypto from 'crypto';
 import sharp from 'sharp';
 import { QrRequest } from '../utils/validation';
