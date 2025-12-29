@@ -11,6 +11,7 @@ WORKDIR /app
 COPY package.json package-lock.json* .npmrc* ./
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
+
 RUN npm ci
 
 ############################
@@ -38,6 +39,8 @@ WORKDIR /app
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/backend/dist ./backend/dist
 COPY --from=build /app/frontend/dist ./frontend/dist
+# Also copy frontend to backend/dist/public (where backend looks first)
+COPY --from=build /app/frontend/dist ./backend/dist/public
 COPY --from=build /app/package.json ./
 COPY --from=build /app/backend/package.json ./backend/
 

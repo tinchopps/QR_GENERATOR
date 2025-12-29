@@ -59,6 +59,11 @@ app.get('/version', (_req, res) => {
 	});
 });
 
+// Simple root route for platform health / quick check (registered before static handler)
+app.get('/', (_req, res) => {
+	res.send('Backend Running');
+});
+
 // Optionally serve frontend build (production single-container) when SERVE_STATIC is set
 if (process.env.SERVE_STATIC) {
 	// Try multiple possible locations for static files
@@ -67,19 +72,20 @@ if (process.env.SERVE_STATIC) {
 		path.join(__dirname, '../../frontend/dist') // Local dev fallback
 	];
 	const staticDir = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
-	
+
 	app.use(express.static(staticDir));
 	app.get('*', (req, res) => {
 		if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not found' });
-		res.sendFile(path.join(staticDir, 'index.html'));
+		const indexPath = path.join(staticDir, 'index.html');
+		if (fs.existsSync(indexPath)) {
+			return res.sendFile(indexPath);
+		}
+		// Fallback if index.html doesn't exist
+		return res.status(404).json({ error: 'Frontend not found' });
 	});
 }
 
+// Error handler must be last
 app.use(errorHandler);
-// Simple root route for platform health / quick check
-app.get('/', (_req, res) => {
-	res.send('Backend Running');
-});
-
 
 export default app;
