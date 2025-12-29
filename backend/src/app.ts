@@ -61,56 +61,21 @@ app.get('/version', (_req, res) => {
 
 // Optionally serve frontend build (production single-container) when SERVE_STATIC is set
 if (process.env.SERVE_STATIC) {
-	// Try multiple possible locations for static files (more exhaustive)
+	// Try multiple possible locations for static files
 	const possiblePaths = [
 		path.join(__dirname, 'public'),           // Docker/Nixpacks: copied to backend/dist/public
-		path.join(__dirname, '../../frontend/dist'), // Local dev fallback
-		path.join(process.cwd(), 'frontend', 'dist'), // monorepo root runtime
-		path.join('/', 'app', 'frontend', 'dist') // container absolute path
+		path.join(__dirname, '../../frontend/dist') // Local dev fallback
 	];
 	const staticDir = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
-
-	// Diagnostic log to help identify where files are expected at runtime
-	// eslint-disable-next-line no-console
-	console.log('SERVE_STATIC enabled. staticDir chosen=', staticDir);
 
 	app.use(express.static(staticDir));
 	app.get('*', (req, res) => {
 		if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not found' });
-
 		const indexPath = path.join(staticDir, 'index.html');
 		if (fs.existsSync(indexPath)) {
 			return res.sendFile(indexPath);
 		}
-
-		// Try alternative index locations for better diagnostics and resiliency
-		const altIndexPaths = [
-			path.join(__dirname, 'public', 'index.html'),
-			path.join(__dirname, '../../frontend/dist', 'index.html'),
-			path.join(process.cwd(), 'frontend', 'dist', 'index.html'),
-			path.join('/', 'app', 'frontend', 'dist', 'index.html')
-		];
-		for (const p of altIndexPaths) {
-			if (fs.existsSync(p)) {
-				// eslint-disable-next-line no-console
-				console.log('Found index at alternative path:', p);
-				return res.sendFile(p);
-			}
-		}
-
-		// Diagnostic listing when index is missing
-		try {
-			// eslint-disable-next-line no-console
-			console.log('StaticDir exists?', fs.existsSync(staticDir));
-			// eslint-disable-next-line no-console
-			console.log('Static dir listing:', fs.readdirSync(staticDir));
-		} catch (e) {
-			// eslint-disable-next-line no-console
-			const msg = (e && (e as any).message) ? (e as any).message : e;
-			console.log('Error reading staticDir for diagnostics', msg);
-		}
-
-		// Fallback responses
+		// Fallback if index.html doesn't exist
 		if (req.path === '/') return res.send('Backend Running');
 		return res.status(404).json({ error: 'Frontend not found' });
 	});
