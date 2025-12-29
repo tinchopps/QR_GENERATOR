@@ -27,7 +27,16 @@ COPY shared/ shared/
 RUN npm run build
 
 ############################
-# Production runtime
+# Optional development image (docker build --target=dev)
+############################
+FROM base AS dev
+ENV NODE_ENV=development
+WORKDIR /app
+COPY . .
+CMD ["npm", "run", "dev"]
+
+############################
+# Production runtime (DEFAULT - last stage)
 ############################
 FROM node:${NODE_VERSION} AS runtime
 ARG COMMIT_HASH=unknown
@@ -48,12 +57,3 @@ COPY --from=build /app/backend/package.json ./backend/
 
 EXPOSE 4000
 CMD ["node", "backend/dist/server.js"]
-
-############################
-# Optional development image (docker build --target=dev)
-############################
-FROM base AS dev
-ENV NODE_ENV=development
-WORKDIR /app
-COPY . .
-CMD ["npm", "run", "dev"]
