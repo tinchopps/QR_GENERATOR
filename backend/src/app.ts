@@ -8,6 +8,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { rateLimitMiddleware } from './middleware/rateLimit';
 import qrRouter from './routes/qr.routes';
 import path from 'path';
+import fs from 'fs';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -65,7 +66,6 @@ if (process.env.SERVE_STATIC) {
 		path.join(__dirname, 'public'),           // Docker/Nixpacks: copied to backend/dist/public
 		path.join(__dirname, '../../frontend/dist') // Local dev fallback
 	];
-	const fs = require('fs');
 	const staticDir = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
 	
 	app.use(express.static(staticDir));
