@@ -1,4 +1,5 @@
 # Multi-stage build: build frontend & backend TypeScript, then run minimal image.
+# Last updated: 2025-12-29 - force rebuild
 
 ARG NODE_VERSION=20-alpine
 ARG COMMIT_HASH=unknown
