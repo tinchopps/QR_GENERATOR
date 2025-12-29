@@ -59,11 +59,6 @@ app.get('/version', (_req, res) => {
 	});
 });
 
-// Simple root route for platform health / quick check (registered before static handler)
-app.get('/', (_req, res) => {
-	res.send('Backend Running');
-});
-
 // Optionally serve frontend build (production single-container) when SERVE_STATIC is set
 if (process.env.SERVE_STATIC) {
 	// Try multiple possible locations for static files
@@ -81,7 +76,13 @@ if (process.env.SERVE_STATIC) {
 			return res.sendFile(indexPath);
 		}
 		// Fallback if index.html doesn't exist
+		if (req.path === '/') return res.send('Backend Running');
 		return res.status(404).json({ error: 'Frontend not found' });
+	});
+} else {
+	// Simple root route for platform health / quick check (only when not serving static)
+	app.get('/', (_req, res) => {
+		res.send('Backend Running');
 	});
 }
 
